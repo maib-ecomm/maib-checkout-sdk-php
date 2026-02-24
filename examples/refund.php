@@ -11,7 +11,6 @@ $token = $auth->accessToken;
 $data = [
     'payId' => '24dd3ac9-2535-4590-8eff-082eb5f20200', // required, id of the payment received in callback
     'amount' => 12.55, // optional, if is not provided, full refund will be performed
-    'callbackUrl' => 'https://example.com/callabck', // optional
     'reason' => 'Some reason for refund operation' // optional
 ];
 

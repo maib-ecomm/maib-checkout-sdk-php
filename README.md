@@ -138,7 +138,6 @@ $checkoutUrl = $createCheckoutResult->checkoutUrl; // redirect payer to this URL
 $data = [
     'payId' => '24dd3ac9-2535-4590-8eff-082eb5f20200', // required (paymentId from callback)
     'amount' => 12.55, // optional (if not provided -> full refund)
-    'callbackUrl' => 'https://example.com/callabck', // optional
     'reason' => 'Some reason for refund operation' // optional
 ];
 
