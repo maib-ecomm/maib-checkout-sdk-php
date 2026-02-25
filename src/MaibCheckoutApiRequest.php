@@ -130,6 +130,31 @@ class MaibCheckoutApi
     }
 
     /**
+     * Sends a request to the get payment by id endpoint.
+     *
+     * @param string $id The parameters for the request.
+     * @param string $token The authentication token.
+     * @throws RequestValidationException if the request fails.
+     */
+    public function getPayment($id, $token)
+    {
+        try
+        {
+            self::validateIdParam($id);
+            self::validateAccessToken($token);
+
+            $endpoint = str_replace("{Id}", $id, MaibCheckoutSdk::GET_PAYMENT);
+
+            return $this->sendRequestGet($endpoint, $token);
+        }
+        catch(RequestValidationException $e)
+        {
+            error_log('Invalid request: ' . $e->getMessage());
+            throw new RequestValidationException('Invalid request: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Sends a request to the get all checkouts by filter endpoint.
      *
      * @param string $filter The filter parameter for the request.

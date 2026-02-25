@@ -23,6 +23,7 @@ class MaibCheckoutSdk
     const GET_TOKEN = "auth/token";
     const GET_ALL_CHECKOUTS = "checkouts";
     const GET_CHECKOUT = "checkouts/{Id}";
+    const GET_PAYMENT = "payments/{Id}";
     const REFUND = "payments/{Id}/refund";
 
     // HTTP request methods
