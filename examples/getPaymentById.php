@@ -8,11 +8,11 @@ $auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIE
 
 $token = $auth->accessToken;
 
-$checkoutId = '5c99c642-3aa2-486b-9b64-d62e9c7f8b5r';
+$paymentId = 'g45b2d61-5739-4425-9ebb-7861002e8b10';
 
 // Payment refund request
-$checkout = MaibCheckoutApiRequest::create($baseUrl)->getCheckout($checkoutId, $token);
+$payment = MaibCheckoutApiRequest::create($baseUrl)->getPayment($paymentId, $token);
 
 // Display request response
-$jsonData = json_encode($checkout);
+$jsonData = json_encode($payment);
 echo $jsonData;
