@@ -11,8 +11,8 @@ $token = $auth->accessToken;
 $paymentId = 'g45b2d61-5739-4425-9ebb-7861002e8b10';
 
 // Payment refund request
-$checkout = MaibCheckoutApiRequest::create($baseUrl)->getPayment($paymentId, $token);
+$payment = MaibCheckoutApiRequest::create($baseUrl)->getPayment($paymentId, $token);
 
 // Display request response
-$jsonData = json_encode($checkout);
+$jsonData = json_encode($payment);
 echo $jsonData;

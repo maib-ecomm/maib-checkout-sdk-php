@@ -227,6 +227,24 @@ $checkouts = $checkoutsResult->items; // array of checkout objects
 
 ---
 
+### 5) Get Payment by ID (`getPayment`)
+
+```php
+$paymentId = '7c95c765-3aa2-486b-9b64-d62e9c7f8b5d';
+
+// Get token
+$auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIENT_SECRET);
+$token = $auth->accessToken;
+
+// Get payment
+$payment = MaibCheckoutApiRequest::create($baseUrl)->getPayment($paymentId, $token);
+
+// Display response
+echo json_encode($payment);
+```
+
+---
+
 ## Callback URL: signature verification (example)
 
 To validate notification signature you need `SIGNATURE_KEY`.
