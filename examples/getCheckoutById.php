@@ -10,9 +10,15 @@ $token = $auth->accessToken;
 
 $checkoutId = '5c99c642-3aa2-486b-9b64-d62e9c7f8b5r';
 
-// Payment refund request
-$checkout = MaibCheckoutApiRequest::create($baseUrl)->getCheckout($checkoutId, $token);
+// Get checkout by id
+$checkoutResponse = MaibCheckoutApiRequest::create($baseUrl)->getCheckout($checkoutId, $token);
 
-// Display request response
-$jsonData = json_encode($checkout);
-echo $jsonData;
+if (isset($checkoutResponse->ok) && $checkoutResponse->ok){
+    $jsonData = json_encode($checkoutResponse->result);
+    echo $jsonData;
+}
+else{
+    foreach ($checkoutResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}

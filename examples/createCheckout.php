@@ -55,11 +55,14 @@ $data = [
 
 
 // Create checkout request
-$createCheckoutResult = MaibCheckoutApiRequest::create($baseUrl)->createCheckout($data, $token);
+$createCheckoutResponse = MaibCheckoutApiRequest::create($baseUrl)->createCheckout($data, $token);
 
-// Display request response
-$jsonData = json_encode($createCheckoutResult);
-echo $jsonData;
-
-$checkoutId = $createCheckoutResult->checkoutId;
-$checkoutUrl = $createCheckoutResult->checkoutUrl; // url to which payer must be redirected to
+if (isset($createCheckoutResponse->ok) && $createCheckoutResponse->ok){
+    $checkoutId = $createCheckoutResponse->result->checkoutId;
+    $checkoutUrl = $createCheckoutResponse->result->checkoutUrl; // url to which payer must be redirected to
+}
+else{
+    foreach ($createCheckoutResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}

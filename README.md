@@ -120,14 +120,17 @@ $auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIE
 $token = $auth->accessToken;
 
 // Create checkout request
-$createCheckoutResult = MaibCheckoutApiRequest::create($baseUrl)->createCheckout($data, $token);
+$createCheckoutResponse = MaibCheckoutApiRequest::create($baseUrl)->createCheckout($data, $token);
 
-// Display response
-echo json_encode($createCheckoutResult);
-
-// Useful fields
-$checkoutId = $createCheckoutResult->checkoutId;
-$checkoutUrl = $createCheckoutResult->checkoutUrl; // redirect payer to this URL
+if (isset($createCheckoutResponse->ok) && $createCheckoutResponse->ok){
+    $checkoutId = $createCheckoutResponse->result->checkoutId;
+    $checkoutUrl = $createCheckoutResponse->result->checkoutUrl; // url to which payer must be redirected to
+}
+else{
+    foreach ($createCheckoutResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}
 ```
 
 ---
@@ -145,15 +148,18 @@ $data = [
 $auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIENT_SECRET);
 $token = $auth->accessToken;
 
-// Refund request
-$paymentRefundResult = MaibCheckoutApiRequest::create($baseUrl)->refund($data, $token);
+// Payment refund request
+$paymentRefundResponse = MaibCheckoutApiRequest::create($baseUrl)->refund($data, $token);
 
-// Display response
-echo json_encode($paymentRefundResult);
-
-// Useful fields
-$refundId = $paymentRefundResult->refundId;
-$status = $paymentRefundResult->status; // 'Created' means success response
+if (isset($paymentRefundResponse->ok) && $paymentRefundResponse->ok){
+    $refundId = $paymentRefundResponse->result->refundId;
+    $status = $paymentRefundResponse->result->status; // 'Created' will be return as successful response
+}
+else{
+    foreach ($paymentRefundResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}
 ```
 
 ---
@@ -167,11 +173,18 @@ $checkoutId = '5c95c821-3aa2-486b-9b64-d62e9c7f8b5d';
 $auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIENT_SECRET);
 $token = $auth->accessToken;
 
-// Get checkout
-$checkout = MaibCheckoutApiRequest::create($baseUrl)->getCheckout($checkoutId, $token);
+// Get checkout by id
+$checkoutResponse = MaibCheckoutApiRequest::create($baseUrl)->getCheckout($checkoutId, $token);
 
-// Display response
-echo json_encode($checkout);
+if (isset($checkoutResponse->ok) && $checkoutResponse->ok){
+    $jsonData = json_encode($checkoutResponse->result);
+    echo $jsonData;
+}
+else{
+    foreach ($checkoutResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}
 ```
 
 ---
@@ -213,16 +226,19 @@ $filters = [
 $auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIENT_SECRET);
 $token = $auth->accessToken;
 
-// Get all checkouts
-$checkoutsResult = MaibCheckoutApiRequest::create($baseUrl)->getAllCheckouts($token, $filters);
+// Get all checkouts request
+$checkoutsResponse = MaibCheckoutApiRequest::create($baseUrl)->getAllCheckouts($token, $filters); // filter is optional, if is not provided all checkouts will be returned
 
-// Display response
-echo json_encode($checkoutsResult);
-
-// Useful fields
-$count = $checkoutsResult->count;
-$totalCount = $checkoutsResult->totalCount;
-$checkouts = $checkoutsResult->items; // array of checkout objects
+if (isset($checkoutsResponse->ok) && $checkoutsResponse->ok){
+    $count = $checkoutsResponse->result->count;
+    $totalCount = $checkoutsResponse->result->totalCount;
+    $checkouts = $checkoutsResponse->result->items;
+}
+else{
+    foreach ($checkoutsResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}
 ```
 
 ---
@@ -236,15 +252,48 @@ $paymentId = '7c95c765-3aa2-486b-9b64-d62e9c7f8b5d';
 $auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIENT_SECRET);
 $token = $auth->accessToken;
 
-// Get payment
-$payment = MaibCheckoutApiRequest::create($baseUrl)->getPayment($paymentId, $token);
+// Get payment request
+$paymentResponse = MaibCheckoutApiRequest::create($baseUrl)->getPayment($paymentId, $token);
 
-// Display response
-echo json_encode($payment);
+if (isset($paymentResponse->ok) && $paymentResponse->ok){
+    $jsonData = json_encode($paymentResponse->result);
+    echo $jsonData;
+}
+else{
+    foreach ($paymentResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}
+
 ```
 
 ---
 
+### 6) Get Refund by ID (`getRefund`)
+
+```php
+$refundId = '4c95c765-3aa2-486b-9b64-d62e9c7f5b5t';
+
+// Get token
+$auth = MaibCheckoutAuthRequest::create($baseUrl)->generateToken(CLIENT_ID, CLIENT_SECRET);
+$token = $auth->accessToken;
+
+// Get refund request
+$getRefundResponse = MaibCheckoutApiRequest::create($baseUrl)->getRefund($refundId, $token);
+
+if (isset($getRefundResponse->ok) && $getRefundResponse->ok){
+    $jsonData = json_encode($getRefundResponse->result);
+    echo $jsonData;
+}
+else{
+    foreach ($getRefundResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}
+
+```
+
+---
 ## Callback URL: signature verification (example)
 
 To validate notification signature you need `SIGNATURE_KEY`.

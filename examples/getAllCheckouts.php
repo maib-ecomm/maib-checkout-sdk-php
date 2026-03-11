@@ -38,13 +38,16 @@ $filters = [
 ];
 
 
-// Payment refund request
-$checkoutsResult = MaibCheckoutApiRequest::create($baseUrl)->getAllCheckouts($token, $filters); // filter is optional, if is not provided all checkouts will be returned
+// Get all checkouts request
+$checkoutsResponse = MaibCheckoutApiRequest::create($baseUrl)->getAllCheckouts($token, $filters); // filter is optional, if is not provided all checkouts will be returned
 
-// Display request response
-$jsonData = json_encode($checkoutsResult);
-echo $jsonData;
-
-$count = $checkoutsResult->count;
-$totalCount = $checkoutsResult->totalCount;
-$checkouts = $checkoutsResult->items;
+if (isset($checkoutsResponse->ok) && $checkoutsResponse->ok){
+    $count = $checkoutsResponse->result->count;
+    $totalCount = $checkoutsResponse->result->totalCount;
+    $checkouts = $checkoutsResponse->result->items;
+}
+else{
+    foreach ($checkoutsResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}

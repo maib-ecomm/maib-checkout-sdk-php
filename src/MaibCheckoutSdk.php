@@ -25,6 +25,7 @@ class MaibCheckoutSdk
     const GET_CHECKOUT = "checkouts/{Id}";
     const GET_PAYMENT = "payments/{Id}";
     const REFUND = "payments/{Id}/refund";
+    const GET_REFUND = "payments/refunds/{Id}";
 
     // HTTP request methods
     const HTTP_GET = "GET";
@@ -181,7 +182,7 @@ class MaibCheckoutSdk
         $statusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($statusCode >= 400) {
+        if ($statusCode >= 500) {
             $errorMessage = $this->getErrorMessage($response, $statusCode);
             throw new ClientException(
                 "An error occurred: HTTP " . $statusCode . ": " . $errorMessage

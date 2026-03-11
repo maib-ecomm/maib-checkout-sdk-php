@@ -155,6 +155,31 @@ class MaibCheckoutApi
     }
 
     /**
+     * Sends a request to the get refund by id endpoint.
+     *
+     * @param string $id The parameters for the request.
+     * @param string $token The authentication token.
+     * @throws RequestValidationException if the request fails.
+     */
+    public function getRefund($id, $token)
+    {
+        try
+        {
+            self::validateIdParam($id);
+            self::validateAccessToken($token);
+
+            $endpoint = str_replace("{Id}", $id, MaibCheckoutSdk::GET_REFUND);
+
+            return $this->sendRequestGet($endpoint, $token);
+        }
+        catch(RequestValidationException $e)
+        {
+            error_log('Invalid request: ' . $e->getMessage());
+            throw new RequestValidationException('Invalid request: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Sends a request to the get all checkouts by filter endpoint.
      *
      * @param string $filter The filter parameter for the request.
@@ -198,7 +223,7 @@ class MaibCheckoutApi
         {
             throw new ResponseException("HTTP error while sending POST request to endpoint $endpoint: {$e->getMessage() }");
         }
-        return $this->handleResponse($response, $endpoint);
+        return $response;
     }
     
     /**
@@ -222,42 +247,7 @@ class MaibCheckoutApi
         {
             throw new ResponseException("HTTP error while sending GET request to endpoint $endpoint: {$e->getMessage() }");
         }
-        return $this->handleResponse($response, $endpoint);
-    }
-    
-    /**
-     * Handles errors returned by the API.
-     *
-     * @param object $response The API response object.
-     * @param string $endpoint The endpoint name.
-     * @return mixed The result extracted from the response.
-     * @throws ResponseException If the API returns an error response or an invalid response.
-     */
-    private function handleResponse($response, $endpoint)
-    {
-        if (isset($response->ok) && $response->ok)
-        {
-            if (isset($response->result))
-            {
-                return $response->result;
-            }
-            else
-            {
-                throw new ResponseException("Invalid response received from server for endpoint $endpoint: missing 'result' field");
-            }
-        }
-        else
-        {
-            if (isset($response->errors))
-            {
-                $error = $response->errors[0];
-                throw new ResponseException("Error sending request to endpoint $endpoint: {$error->errorMessage} ({$error->errorCode})");
-            }
-            else
-            {
-                throw new ResponseException("Invalid response received from server for endpoint $endpoint: missing 'ok' and 'errors' fields");
-            }
-        }
+        return $response;
     }
 
     private static function validateAccessToken($token)

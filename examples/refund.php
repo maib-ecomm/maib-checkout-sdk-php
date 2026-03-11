@@ -15,11 +15,16 @@ $data = [
 ];
 
 // Payment refund request
-$paymentRefundResult = MaibCheckoutApiRequest::create($baseUrl)->refund($data, $token);
+$paymentRefundResponse = MaibCheckoutApiRequest::create($baseUrl)->refund($data, $token);
 
-// Display request response
-$jsonData = json_encode($paymentRefundResult);
-echo $jsonData;
+if (isset($paymentRefundResponse->ok) && $paymentRefundResponse->ok){
+    $refundId = $paymentRefundResponse->result->refundId;
+    $status = $paymentRefundResponse->result->status; // 'Created' will be return as successful response
+}
+else{
+    foreach ($paymentRefundResponse->errors as $error) {
+        echo $error->errorCode . ": " . $error->errorMessage;
+    }
+}
 
-$refundId = $paymentRefundResult->refundId;
-$status = $paymentRefundResult->status; // 'Created' will be return as successful response
+
